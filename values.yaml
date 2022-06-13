@@ -1,0 +1,89 @@
+# Default values for kafkahelmdeploy.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+metadata:
+  kafka:
+    name: kafka
+  zookeeper:
+    name: zookeeper
+namespace: kafkahelm
+
+image:
+  kafka:
+    repository: confluentinc/cp-kafka
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: latest
+  zookeeper:
+    repository: confluentinc/cp-zookeeper
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: latest
+
+env:
+  kafka:
+    interBrokerListenerName: PLAINTEXT
+    advertisedListeners: PLAINTEXT://ip-10-0-2-8.eu-central-1.compute.internal:30502
+    brokerId: 1
+    zookeeperConnect: zookeepersvc.kafkahelm.svc:2181
+    listeners: PLAINTEXT://0.0.0.0:9092
+    offsetsTopicReplicationFactor: 1
+    transactionStateLogReplicationFactor: 1
+    superUsers: User:admin
+    jmxPort: 5021
+    listenerSecurityProtocolMap: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+    messageMaxBytes: "10000000"
+    replicaFetchMaxBytes: "10100000"
+    heapOpts: "-Xms1g -Xmx2g" 
+  zookeeper:
+    clientPort: 2181
+    initLimit: 5
+    log4jRootLoglevel: INFO
+    servers: 0.0.0.0:2888:3888
+    serverId: 1
+    syncLimit: 2
+    tickTime: 2000
+     
+
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  kafka:
+    name: kafkasvc
+    type: NodePort
+    port: 9092
+    targetPort: 9092
+    nodePort: 30502
+  zookeeper:
+    name: zookeepersvc
+    type: NodePort
+    port: 2181
+    port1: 2888
+    port2: 3888
+    nodePort: 30501
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
